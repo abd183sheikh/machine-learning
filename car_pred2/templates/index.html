@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Predictions</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Jersey+25&family=Press+Start+2P&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Varela+Round&display=swap"
+        rel="stylesheet">
+
+</head>
+
+<body>
+
+
+    <div class="container">
+        <header>
+            <div class="div1">
+                <p>Welcome To Car Price Predictors</p>
+            </div>
+        </header>
+        <form action="/submit" method="POST" accept-charset="utf-8">
+
+            <!-- <body> -->
+            <div class="container1">
+                <h2>This Website Predicts The Price Of A Car You Want To Sell</h2>
+
+
+            </div>
+            <div class="container1">
+                <h4>Select The Company:</h4>
+
+
+                <select name="company" id="company" class="select" required
+                    onchange="load_car_models(this.id ,'car_model')">
+                    <option value="" disabled selected>---Select Company---</option>
+                    {% for company in companies %}
+                    <option value="{{ company }}" required>{{ company}}</option>
+                    {% endfor %}
+                </select>
+
+                <h4>Select The Model:</h4>
+
+
+                <select name="model" id="car_model" class="select" required>
+                    <option value="">--Model--</option>
+
+                    {% for models in car_model %}
+                    <option value="{{models}}">{{models}}</option>
+                    {% endfor %}
+                </select>
+                <h4>Select The Year Of Purchase:</h4>
+                <select name="year" id="year" class="select" required>
+                    <option value="">--year--</option>
+                    {% for year in years %}
+                    <option value="{{year}}">{{year}}</option>
+                    {% endfor %}
+
+                </select>
+                <h4>Select The Fuel Type:</h4>
+
+
+                <select name="fuel" id="fuel" class="select" required>
+                    <option value="">---Fuel type---</option>
+                    {% for fuel in fuel_type %}
+                    <option value="{{fuel}}">{{fuel}}</option>
+                    {% endfor %}
+                </select>
+                <h4>Enter The Number Of Kilometer That The Car Has Travelled:</h4>
+
+
+                <input type="number" name="kilometer" class="select" placeholder="Enter The Kilometer Driven" required
+                    style="padding:0px 0px;">
+
+
+
+            </div>
+
+
+
+
+            <footer>
+
+                <div class="container1">
+                    <button class="btn btn primary container1 button" onclick="send_data()">Predict Price</button>
+                </div>
+
+            </footer>
+        </form>
+        <br>
+        <div class="row" id="spin1">
+            
+
+            <div class="col-12" style="text-align: center">
+                <h4><span id="prediction"></span></h4>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* function load_car_models(company_id,car_model_id)
+        {
+            var company=document.getElementById(company_id);
+            var car_model= document.getElementById(car_model_id);
+            console.log(company.value);
+            //car_model.value="";
+            //car_model.innerHTML="";   
+            
+    
+           
+        } */
+        function form_handler(event) {
+            event.preventDefault()
+        }
+
+
+
+
+        function send_data() {
+            document.querySelector("form").addEventListener("submit", form_handler);
+            var fd = new FormData(document.querySelector('form'));
+
+            var xhr = new XMLHttpRequest({ mozSystem: true });
+            var spinner = document.createElement('div');
+            spinner.classList.add('spinner');
+            document.getElementById("spin1").appendChild(spinner)
+          
+            /*document.getElementById('prediction').innerHTML = "Wait! Predicting Price.....";*/
+            xhr.open('POST', '/predict', true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    setTimeout(function () {
+                        
+                        spinner.remove();
+                        document.getElementById('prediction').innerHTML = "Prediction: ₹" + xhr.responseText;
+                    }, 3000)
+                    // document.getElementById('prediction').innerHTML = "Prediction: ₹" + xhr.responseText;
+
+                }
+            };
+
+            xhr.onload = function () { };
+
+            xhr.send(fd);
+
+        }
+
+
+    </script>
+</body>
+
+
+</html>
